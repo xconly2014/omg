@@ -1,0 +1,86 @@
+{extend name="base" /}
+{block name="container"}
+<style>
+</style>
+<div class="row">
+    <div class="col-xs-8">
+        <h1 class="page-header">说明</h1>
+        <div class="page-body">
+            <p>在使用该接口之前，需先获得该应用的 SecretKey 和 AESKey。（每个应用都不一样）</p>
+        </div>
+
+
+
+        <h3 class="page-header">请求方式</h3>
+        <div class="page-body">
+            <pre><code>&gt; POST /api/user/login?sign=980ced020f821c08d2d913c475ed5057 HTTP/1.1
+&gt; {"timestamp":"1520473580","username":"test001","password":"test001"}
+</code></pre>
+            <p>接口皆以<code>HTTP POST</code>的方式发起请求，请求数据主体为Json字符串。而url中只有唯一参数<code>sign</code>。</p>
+            <p>数据主体中包含公共字段timestamp</code>(当前秒数时间戳)。</p>
+        </div>
+
+
+
+        <h3 class="page-header">签名 sign</h3>
+        <div class="page-body">
+            <p>签名步骤:</p>
+            <ul>
+                <li><p>请求主体Json字符串替换字符MD5加密，并在其后拼接上 <code>SecretKey</code></p>
+                    <pre><code>body = md5('{"timestamp":"1520473580","username":"test001","password":"test001"}') + SecretKey</code>
+// body: 8162e6f7b96e1afd266d6595a4558749YourSecretKey</pre>
+                </li>
+                <li><p>再次计算MD5，得到签名</p>
+                    <pre><code>sign = md5( body )</code>
+// sign: 5c27f571a88336519b0a9ca8d126f788</pre>
+                </li>
+            </ul>
+            <p>将签名参数拼接到接口URL后即可</p>
+        </div>
+
+
+
+        <h3 class="page-header">响应格式</h3>
+        <div class="page-body">
+            <pre><code>&gt; {
+    "code": 1,
+    "message": "ok",
+    "data": {
+        "uid": "U4d9aa45dxswr9a9",
+        "username": "test001",
+        "nickname": "",
+        "point": "1000000",
+        "last_login_time": "",
+        "_time": "1520475349"
+    },
+    "sign": "10e792351bdf40f3ebe6e688e04c33ab"
+}
+</code></pre>
+            <p>响应数据固定返回<code>code</code>、<code>message</code>和<code>data</code> 三个字段</p>
+            <p>当 code 等于1时，表示成功；当 code 不为1时，message表示具体错误消息内容</p>
+        </div>
+
+
+
+        <h3>验证签名：</h3>
+        <div class="page-body">
+            <p>当 code 等于1时，返回<code>sign</code>字段。其签名生成步骤与请求时签名过程一致，参与签名的数据主体为<code>data</code>字段对应的Json字符串。如上响应中：</p>
+            <pre><code>{"uid":"U4d9aa45dxswr9a9","username":"test001","nickname":"","point":"1000000","last_login_time":"","_time":"1520475349"}</code></pre>
+            <ul>
+                <li><p>为data计算MD5，并在其后拼接上 <code>SecretKey</code></p>
+                    <pre><code>body = md5('{"uid":"U4d9aa45dxswr9a9","username":"test001","nickname":"","point":"1000000","last_login_time":"","_time":"1520475349"}') + SecretKey</code>
+// body: 7d6df195279e8523bfd457d8f81c0f8fYourSecretKey</pre>
+                </li>
+                <li><p>再次计算MD5，得到签名</p>
+                    <pre><code>sign = md5( body )</code>
+// sign: 10e792351bdf40f3ebe6e688e04c33ab</pre>
+                </li>
+            </ul>
+
+            <p>以此Json字符串计算签名结果： 10e792351bdf40f3ebe6e688e04c33ab</p>
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+{/block}

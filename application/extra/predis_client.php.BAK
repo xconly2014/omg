@@ -1,0 +1,13 @@
+<?php
+
+return [
+    'parameters' => [
+        'scheme' => 'tcp',
+        'host'   => '127.0.0.1',
+        'port'   => 6379,
+    ],
+    'options' => null,
+    'db_default' => 0,
+    'db_oauth2' => 1,
+    'db_think_cache' => 2,
+];

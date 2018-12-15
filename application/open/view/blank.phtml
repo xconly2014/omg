@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>G | {block name="headTitle"}{$cur_menu->name|strip_tags|default=''}{/block}</title>
+    {block name="head"}{/block}
+
+    <!-- Bootstrap -->
+    <link href="/static/g/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="/static/g/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="/static/g/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- SweetAlert -->
+    <link href="/static/css/lib/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="/static/g/build/css/custom.min.css" rel="stylesheet">
+
+    <link href="/static/css/open_common.css?v=1" rel="stylesheet">
+</head>
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        {include file="left_sidebar"}
+        {include file="top_nav"}
+
+        <!-- page content -->
+        {block name="main"}
+        <div class="right_col" role="main">
+            <div class="">
+                <div class="page-title">
+                    <div class="title_left">
+                        {block name="pageTitle"}
+                        <h3>{$cur_menu->name|default=''}</h3>
+                        {/block}
+                    </div>
+
+                    <div class="title_right">
+                        {block name="pageRight"}
+                        {/* <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search for...">
+                                <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">Go!</button>
+                    </span>
+                            </div>
+                        </div>*/}
+                        {/block}
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        {block name="pageContent"}{/block}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+        {/block}
+
+        {include file="footer"}
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="/static/g/vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="/static/g/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="/static/g/vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="/static/g/vendors/nprogress/nprogress.js"></script>
+<!-- SweetAlert -->
+<script src="/static/js/lib/sweetalert/sweetalert.min.js"></script>
+
+{block name="bottom"}{/block}
+<!-- Custom Theme Scripts -->
+<script src="/static/g/build/js/custom.min.js"></script>
+</body>
+</html>

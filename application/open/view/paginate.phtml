@@ -1,0 +1,14 @@
+<nav aria-label="Page navigation example">
+    {$list->render()}
+    <script>
+        var l = document.querySelectorAll(".pagination li");
+        for (var i=0;i<l.length;i++) {
+            l[i].classList.add('page-item');
+        }
+
+        var a = document.querySelectorAll(".pagination li a, .pagination li span");
+        for (var i=0;i<a.length;i++) {
+            a[i].classList.add('page-link');
+        }
+    </script>
+</nav>

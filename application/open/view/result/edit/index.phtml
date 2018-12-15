@@ -1,0 +1,209 @@
+{extend name="blank" /}
+
+{block name="pageContent"}
+<div class="x_panel">
+    <div class="x_content">
+        <form class="form-horizontal form-label-left" novalidate id="main-form" action="" method="post">
+            {:token()}
+            <input id="_id" name="_id" type="hidden" value="{$result->id}">
+            <input name="subject_id" type="hidden" value="{$subject->id}">
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="view_key">模板名 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="view_key" class="form-control col-md-7 col-xs-12" data-validate-length-range="2,20" name="view_key"
+                           placeholder="" required="required" type="text" value="{$result->view_key}">
+                </div>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="mask">Mask
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <textarea id="mask" class="textarea_editor form-control" data-validate-length-range="4,500" rows="3"
+                              name="mask" placeholder="Enter text ..." >{$result->mask}</textarea>
+                </div>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="explain">注释
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="explain" class="form-control col-md-7 col-xs-12" name="explain"
+                           placeholder="" type="text" value="{$result->explain}">
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success btn-submit">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{IF condition="$result->id"}
+<div class="x_panel">
+    <div class="x_content">
+        <table class="table table-striped jambo_table bulk_action" data-id="{$result->id}" id="resourcesTable">
+            <thead>
+            <tr>
+                <th>资源名称</th>
+                <th>类型</th>
+                <th>数据</th>
+                <th><button type="button" class="btn btn-xs btn-success btn-editR" data-rid="{$result->id}">添加资源</button></th>
+            </tr>
+            </thead>
+            <tbody>
+            {NOTEMPTY name="$result->resources"}
+            {FOREACH $result->resources AS $r}
+            <tr data-id="{$r.id}">
+                <td>{$r.view_key}</td>
+                <td>{$r.type}</td>
+                <td class="field_detail" data-type="{$r.type}">
+                    {EQ name="$r.type" value="PIC"}
+                    <img id="{$r.view_key}" src="{$r.detail}" class="avatar" alt="Icon">
+                    {ELSE}
+                    {$r.detail}
+                    {/EQ}
+                    </td>
+                <td>
+                    <span class="btn-editR" data-rid="{$result->id}" data-id="{$r->id}" data-detail="{$r->getData('detail')}">编辑</span>
+                    <span class="pl-1 text-danger btn-delR" data-id="{$r->id}">删除</span>
+                </td>
+            </tr>
+            {/FOREACH}
+            {/NOTEMPTY}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="x_panel">
+    <div class="x_content">
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <textarea id="canvasJsonTextarea" style="width: 100%" rows="8">{$result->code}</textarea>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-primary btn-exec">执行</button>
+                            <button type="button" class="btn btn-success btn-saveCode" data-id="{$result->id}">保存</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <p>示例：</p>
+                    <pre>[
+    {
+        "action": "fillBG",
+        "args": [600, 300]
+    },
+    {
+        "action": "addBG",
+        "args": ["resource_01", 600, 300]
+    },
+   {
+        "action": "addAvatar",
+        "args": [10,10, 80, 80]
+    },
+    {
+        "action": "addNickname",
+        "args": [40, "red", 300, 100, "right"]
+    },
+    {
+        "action": "addTXT",
+        "args": ["圣诞老人给你的礼物：",40, "black", 300, 120 , "left"]
+    }
+]</pre>
+                    <p></p>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <canvas id="myCanvas" style="border:1px solid #d3d3d3;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{/IF}
+
+<!-- 模态框（编辑问题） -->
+<div class="modal fade" id="editResourceModal" tabindex="-1" role="dialog" aria-labelledby="editResourceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editResourceModalLabel">编辑资源</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    {:token()}
+                    <input type="hidden" name="subject_id" value="{$subject->id}">
+                    <input type="hidden" id="edit_id" name="_id">
+                    <input type="hidden" id="edit_rid" name="result_id">
+                    <div class="form-group">
+                        <label for="edit_key" class="col-sm-2 control-label">资源名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="edit_key" name="view_key" placeholder="QM-1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_key" class="col-sm-2 control-label">类型</label>
+                        <div class="col-sm-10">
+                            <div class="radio radio-inline">
+                                <label>
+                                    <input type="radio" id="edit_type_TXT" class="flat" name="type" value="TXT" > 文本
+                                </label>
+                            </div>
+                            <div class="radio radio-inline">
+                                <label>
+                                    <input type="radio" id="edit_type_PIC" class="flat" name="type" value="PIC"> 图片
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_detail" class="col-sm-2 control-label">内容</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="edit_detail" name="detail">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="dropzone" id="pic-box">
+                            <div class="dz-default dz-message"><span>COVER</span></div>
+                            <div class="fallback">
+                                <input name="file" type="file" multiple />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary btn-submit">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+{/block}
+
+{block name="head"}
+<!-- Dropzone.js -->
+<link href="/static/g/vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+<link href="/static/g/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+{/block}
+
+{block name="bottom"}
+<!-- validator -->
+<script src="/static/g/vendors/validator/validator.js"></script>
+<script src="/static/g/vendors/dropzone/dist/min/dropzone.min.js"></script>
+<script src="/static/g/vendors/iCheck/icheck.min.js"></script>
+<script src="/static/js/open/common.js"></script>
+<script src="/static/js/open/resultCanvas.js?v=2"></script>
+<script>
+</script>
+<script src="/static/js/open/resultEdit.js"></script>
+{/block}

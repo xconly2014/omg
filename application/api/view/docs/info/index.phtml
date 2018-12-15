@@ -1,0 +1,208 @@
+{extend name="base" /}
+
+{block name="headTitle"}{$dom.title}|{/block}
+{block name="container"}
+<style>
+    .tab-pane {padding: 12px;}
+    .popover-content {word-break:break-all; word-wrap:break-word;}
+    .label { font-size: 12px; margin-left: 20px; }
+</style>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">{$dom.title}<small> {$dom.url}</small>
+            {NOTEMPTY name="$dom.scope"}
+                {FOREACH $dom.scope as $scope}
+                <span class="label label-primary">{$scope|strtoupper}</span>
+                {/FOREACH}
+            {/NOTEMPTY}
+        </h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<div class="row">
+    <div class="col-lg-12">
+        <ul id="myTab" class="nav nav-tabs">
+            <li class="active"><a href="#info" data-toggle="tab">接口信息</a></li>
+            <li><a href="#test" data-toggle="tab">在线测试</a></li>
+        </ul>
+        <div class="tab-content">
+            <!--info-->
+            <div class="tab-pane fade in active" id="info">
+                {if condition="$dom.description"}
+                <div class="row"><div class="col-xs-12">{$dom.description}</div></div>
+                {/if}
+                {if condition="isset($dom.param)"}
+                <h3>接口参数</h3>
+                <div class="row">
+                <table class="table table-striped" >
+                    <tr><th>参数名字</th><th>类型</th><th>是否加密</th><th>是否必须</th><th>默认值</th><th>说明</th></tr>
+                    {notempty name="dom.param"}
+                    {volist name="dom.param" id="param"}
+                    <tr>
+                        <td>{$param.name|default="-"}</td>
+                        <td>{$param.type|default="-"}</td>
+                        <td>{if condition="isset($param.encrypt) && $param.encrypt eq 1"}<span class="text-danger">是</span>{else/}否{/if}</td>
+                        <td>{if condition="isset($param.require) && $param.require eq 1"}必填{else/}非必填{/if}</td>
+                        <td>{$param.default|default="-"|htmlspecialchars}</td>
+                        <td>{$param.desc|default="-"|htmlspecialchars}</td>
+                    </tr>
+                    {/volist}
+                    {/notempty}
+                </table>
+                </div>
+                <br>
+                {/if}
+            </div>
+            <!--info-->
+            <!--test-->
+            <div class="tab-pane fade in" id="test">
+                <!--<h3>在线测试</h3>-->
+                <div class="row">
+                    <div class="col-xs-12 form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">接口地址</label>
+                            <div class="col-sm-6">
+                                <input class="form-control" type="text" name="url" value='<?php echo isset($dom["url"]) ? url($dom["url"],"","",true) : "请设置url注释"; ?>' autocomplete="off">
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="button" id="btn-sign" class="btn btn-primary" autocomplete="off">签名</button>
+                                <button type="button" id="btn-send" class="btn btn-success" autocomplete="off">发送</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#jsonModal">Json</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <form id="apiform" class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">&nbsp;&nbsp;&nbsp;</label>
+                                <div class="col-sm-6">
+                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#addParamModal">
+                                        <span class="glyphicon glyphicon-plus"></span> 增加参数</button>
+                                    <button type="button" class="btn btn-default btn-disabled-all">
+                                        <span class="glyphicon glyphicon-remove"></span> 全部取消</button>
+                                </div>
+                            </div>
+                            {if condition="isset($dom.param)"}
+                            {volist name="dom.param" id="param"}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    {if condition="$param.require eq 1"}
+                                    <i class="glyphicon glyphicon-asterisk text-danger"></i>
+                                    {/if}
+                                    {$param.name|default=""}
+                                </label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" {$param.require?'':'disabled'} type="text" name="{$param.name|default=''}" value="{$param.default|default=''}" placeholder="{$param.desc|default=''|htmlspecialchars}">
+                                </div>
+                                <div class="col-sm-2"><button type="button" class="btn btn-default btn-disabled">X</button></div>
+                            </div>
+                            {/volist}
+                            {/if}
+                        </form>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">返回结果</h3>
+                    </div>
+                    <div class="panel-body" id="span_result">
+                        <div class="form-inline result_body">
+                            <label>缩进量:</label>
+                            <select class="form-control" id="TabSize"  onchange="TabSizeChanged()">
+                                <option value="1">1</option>
+                                <option value="2" selected="true">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                            </select>
+                            <input type="checkbox" id="QuoteKeys" onclick="QuoteKeysClicked()" checked="true"/> <label>引号</label>
+                            <a href="javascript:void(0);" onclick="SelectAllClicked()">全选</a>
+                            <a href="javascript:void(0);" onclick="ExpandAllClicked()">展开</a>
+                            <a href="javascript:void(0);" onclick="CollapseAllClicked()">叠起</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(3)">2级</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(4)">3级</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(5)">4级</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(6)">5级</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(7)">6级</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(8)">7级</a>
+                            <a href="javascript:void(0);" onclick="CollapseLevel(9)">8级</a>
+                        </div>
+                        <div id="Canvas" class="Canvas"></div>
+                    </div>
+                </div>
+            </div> <!--test-->
+        </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+
+<!-- modal -->
+<div class="modal fade" id="addParamModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">增加参数</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">参数名</label>
+                        <div class="col-sm-6">
+                            <input class="form-control" type="text" name="addparam" value="">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary submit">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- modal -->
+<div class="modal fade" id="jsonModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">Json</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <textarea class="form-control" ></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn  btn-primary sign">签名</button>
+                <button type="button" class="btn btn-success submit">发送</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+{/block}
+{block name="bottom"}
+{js href="/static/js/docs_common.js" /}
+<script type="text/javascript">
+    docs.info.fields = {$fields|json_encode};
+    docs.info();
+</script>
+{/block}

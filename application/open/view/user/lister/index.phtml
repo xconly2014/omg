@@ -1,0 +1,46 @@
+{extend name="blank" /}
+
+
+{block name="pageContent"}
+<div class="x_panel">
+    <div class="x_title">
+        <h2>User table <small>User table subtitle</small></h2>
+        <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+            <li><a class="close-link"><i class="fa fa-close"></i></a>
+            </li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>头像</th>
+                <th>昵称</th>
+                <th>性别</th>
+                <th>引荐人</th>
+                <th>绑定手机</th>
+            </tr>
+            </thead>
+            <tbody>
+            {NOTEMPTY name="$list"}
+            {FOREACH $list AS $row}
+            <tr>
+                <th scope="row">{$row->id}</th>
+                <td>{NOTEMPTY name="$row->avatar"}<img src="{$row->avatar}" class="avatar" alt="Icon">{/NOTEMPTY}</td>
+                <td>{$row->nickname}</td>
+                <td>{$row->gender}</td>
+                <td>{$row->referrer}</td>
+                <td>{$row->is_tel_bind?='+'.$row->tel_prefix.' '.$row->tel_number}</td>
+            </tr>
+            {/FOREACH}
+            {/NOTEMPTY}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}

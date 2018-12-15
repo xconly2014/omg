@@ -1,0 +1,104 @@
+{extend name="blank" /}
+
+{block name="pageContent"}
+<div class="x_panel">
+    <div class="x_content">
+        <div class="form-horizontal form-label-left">
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="file"></label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="dropzone" id="cover-box">
+                        <div class="dz-default dz-message"><span>COVER</span></div>
+                        <div class="fallback">
+                            <input name="file" type="file" multiple />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form class="form-horizontal form-label-left" novalidate id="main-form">
+            {:token()}
+            <input id="_id" name="_id" type="hidden" value="{$subject->id}">
+            <input id="cover" name="cover" type="hidden" value="{$subject->cover?$subject->getData('cover'):''}">
+            <input id="coverWidth" name="coverWidth" type="hidden" value="{$subject->coverWidth}">
+            <input id="coverHeight" name="coverHeight" type="hidden" value="{$subject->coverHeight}">
+            <input id="_coverDataUrl" type="hidden" value="{$subject->coverDataUrl}">
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="subject">题目 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="subject" class="form-control col-md-7 col-xs-12" data-validate-length-range="4,100" name="subject"
+                           placeholder="" required="required" type="text" value="{$subject->subject}">
+                </div>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="description">详细介绍 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <textarea id="description" class="textarea_editor form-control" required="required" data-validate-length-range="4,500" rows="5"
+                              name="description" placeholder="Enter text ..." >{$subject->description}</textarea>
+                </div>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="share_description">分享介绍 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <textarea id="share_description" class="textarea_editor form-control" required="required" data-validate-length-range="4,500" rows="5"
+                              name="share_description" placeholder="Enter text ..." >{$subject->share_description}</textarea>
+                </div>
+                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="分享出去的描述,无内容时分享描述将取自“详细介绍”"><i class="fa fa-question-circle-o"></i></span>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="label">标签 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="label" class="form-control col-md-7 col-xs-12" data-validate-length-range="4,20" name="label"
+                           placeholder="" required="required" type="text" value="{$subject->label}">
+                </div>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="scene">scene <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="scene" class="form-control col-md-7 col-xs-12"
+                           placeholder="" type="text" value="">
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-12">
+                    <button type="button" class="btn btn-primary btn-qrcode" data-sid="{$subject->sid}">生成二维码</button>
+                </div>
+            </div>
+            <div class="item form-group">
+                <div class="col-md-4 col-sm-4 col-xs-10 col-sm-offset-3">
+                    <img id="pic-qrcode" src="{$subject->qrcode|default=''}">
+                </div>
+            </div>
+
+            <div class="ln_solid"></div>
+            <div class="form-group">
+                <div class="col-md-6 col-md-offset-3">
+
+                    <button type="button" class="btn btn-success btn-submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block name="head"}
+<!-- Dropzone.js -->
+<link href="/static/g/vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+{/block}
+
+{block name="bottom"}
+<!-- validator -->
+<script src="/static/g/vendors/validator/validator.js"></script>
+<script src="/static/g/vendors/dropzone/dist/min/dropzone.min.js"></script>
+<script src="/static/js/open/common.js"></script>
+<script src="/static/js/open/subjectEdit.js"></script>
+{/block}

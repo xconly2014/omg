@@ -1,0 +1,116 @@
+{extend name="blank" /}
+
+
+{block name="pageContent"}
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>主题 Gallery <small> 主题 design </small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="{:url('/open/subject/edit')}" target="_blank"><i class="fa fa-plus-circle"></i> 添加</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="row">
+                    {FOREACH $list AS $row}
+                    <div class="col-md-55">
+                        <div class="thumbnail" style="margin-bottom: 0;">
+                            <div class="image view view-first">
+                                <img style="width: 100%; display: block;" src="{$row->cover}" alt="image" />
+                                <div class="mask">
+                                    <p>{$row->label}</p>
+                                    <div class="tools tools-bottom">
+                                        <a href="{:url('/open/subject/edit', ['id'=>$row->sid])}"><i class="fa fa-edit"></i></a>
+                                        <a href="javascript:;" class="btn-del" data-id="{$row->id}"><i class="fa fa-times"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="caption">
+                                <p><b>【{$row->sid}】</b> {$row->subject}</p>
+                            </div>
+                        </div>
+                        <div class="caption">
+                            <a href="{:url('/open/question', ['id'=>$row->sid])}" class="btn btn-dark btn-xs"><i class="fa fa-question"></i> 问题</a>
+                            <a href="{:url('/open/result', ['id'=>$row->sid])}" class="btn btn-primary btn-xs"><i class="fa fa-random"></i> 答案</a>
+                            <button class="btn {$row->publish_at?'btn-success':'btn-default'} btn-xs btn-publish" data-sid="{$row->sid}" data-value="{$row->publish_at}">
+                                <i class="fa fa-send"></i> 发布</button>
+                            <button class="btn {$row->is_hot?'btn-warning':'btn-default'} btn-xs btn-hot" data-sid="{$row->sid}" data-value="{$row->is_hot}">
+                                <i class="fa fa-fire"></i> 热门</button>
+                            <button class="btn {$row->is_top?'btn-info':'btn-default'} btn-xs btn-top" data-sid="{$row->sid}" data-topPic="{$row->getData('top_pic')}">
+                                <i class="fa fa-hand-o-up"></i> 置顶</button>
+                        </div>
+                    </div>
+                    {/FOREACH}
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="pull-right">
+                    {include file="paginate"}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（编辑问题） -->
+<div class="modal fade" id="picModal" tabindex="-1" role="dialog" aria-labelledby="picModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="picModalLabel">顶部横幅</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    {:token()}
+                    <input type="hidden" id="modal_sid" name="sid">
+                    <div class="form-group">
+                        <label for="modal_topPic" class="col-sm-2 control-label">图片</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="modal_topPic" name="top_pic">
+                        </div>
+                    </div>
+                </form>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="dropzone" id="pic-box">
+                            <div class="dz-default dz-message"><span>TOP PIC</span></div>
+                            <div class="fallback">
+                                <input name="file" type="file" multiple />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary btn-submit">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+{/block}
+
+{block name="head"}
+<!-- Dropzone.js -->
+<link href="/static/g/vendors/dropzone/dist/min/dropzone.min.css" rel="stylesheet">
+{/block}
+
+{block name="bottom"}
+<script src="/static/g/vendors/dropzone/dist/min/dropzone.min.js"></script>
+<script src="/static/js/open/common.js"></script>
+<script src="/static/js/open/subject.js"></script>
+{/block}

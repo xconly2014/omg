@@ -1,0 +1,122 @@
+{extend name="blank" /}
+
+{block name="pageRight"}
+<div class="form-group pull-right top_search">
+    <div class="input-group">
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modalMass">群发</button>
+    </div>
+</div>
+{/block}
+
+{block name="pageContent"}
+<div class="row top_tiles">
+    <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="tile-stats">
+            <div class="icon"><i class="fa fa-users"></i></div>
+            <div class="count">{$count_openid}</div>
+            <h3>总用户数</h3>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+        </div>
+    </div>
+    <div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+        <div class="tile-stats">
+            <div class="icon"><i class="fa fa-comments-o"></i></div>
+            <div class="count">{$count_msg_openid}</div>
+            <h3>预计可接收用户数</h3>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+        </div>
+    </div>
+</div>
+
+<div class="x_panel">
+    <div class="x_title">
+        <h2>历史记录 <small> Histories </small></h2>
+        <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+            </li>
+            <li><a class="close-link"><i class="fa fa-close"></i></a>
+            </li>
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>主题</th>
+                <th>类型</th>
+                <th>状态</th>
+            </tr>
+            </thead>
+            <tbody>
+            {NOTEMPTY name="$list"}
+            {FOREACH $list AS $row}
+            <tr>
+                <th scope="row">{$row->id}</th>
+                <td>{$row->subject}</td>
+                <td>{$row->msgtype}</td>
+                <td><i class="{$row->status===1?'text-success fa fa-check-circle-o':'fa fa-clock-o'}"></i></td>
+            </tr>
+            {/FOREACH}
+            {/NOTEMPTY}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-xs-12">
+        <div class="pull-right">
+            {include file="paginate"}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalMass" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">发送文本消息</h4>
+            </div>
+            <form id="msgText" data-parsley-validate="" novalidate="">
+                {:token()}
+                <input type="hidden" name="msgtype" value="text">
+            <div class="modal-body">
+                <p>链接写法：&lt;a {/* href=&quot;http://www.qq.com&quot;*/} data-miniprogram-appid=&quot;wx821d08c94215275b&quot; data-miniprogram-path=&quot;pages/index/index&quot;&gt;点击跳小程序&lt;/a&gt;</p>
+                <div class="form-group">
+                    <label for="msg_subject">主题 (5 chars min, 50 max) :</label>
+                    <input type="text" id="msg_subject" class="form-control" name="subject"
+                           required="required"
+                           data-parsley-minlength="5"
+                           data-parsley-maxlength="50"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="msg_content">内容 (5 chars min, 250 max) :</label>
+                    <textarea id="msg_content" class="form-control" name="content" rows="3"
+                              required="required"
+                              data-parsley-trigger="keyup"
+                              data-parsley-minlength="5"
+                              data-parsley-maxlength="250"
+                              data-parsley-validation-threshold="10"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-save">Save changes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+
+
+{block name="bottom"}
+<script src="/static/g/vendors/parsleyjs/dist/parsley.min.js"></script>
+<script src="/static/js/open/common.js"></script>
+<script src="/static/js/open/wx_mass.js"></script>
+{/block}

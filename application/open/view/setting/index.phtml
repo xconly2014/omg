@@ -1,0 +1,81 @@
+{extend name="blank" /}
+
+
+{block name="pageContent"}
+<div class="x_panel">
+    <div class="x_content">
+        <form class="form-horizontal form-label-left" novalidate id="main-form">
+            {:token()}
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="rate-pointToRMB">积分兑换比例 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="rate-pointToRMB" name="rate-pointToRMB" class="form-control col-md-7 col-xs-12"
+                           required="required"  data-validate-minmax="1"
+                           placeholder="" type="text" value="{$config['rate-pointToRMB']['value']|default='2'}">
+                </div>
+                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="多少积分可兑换RMB 1分"><i class="fa fa-question-circle-o"></i></span>
+            </div>
+
+            <div class="item form-group">
+                <?php $rate_showUpIcon = isset($config['rate-showUpIcon'])&&$config['rate-showUpIcon']['value']==1?1:0; ?>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="rate-showUpIcon">兑换比例上涨 <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" {$rate_showUpIcon?='checked="checked"'} class="flat" name="rate-showUpIcon" value="1" > 是
+                        </label>
+                    </div>
+                    <div class="radio radio-inline">
+                        <label>
+                            <input type="radio" {$rate_showUpIcon?'':'checked="checked"'} class="flat" name="rate-showUpIcon" value="0"> 否
+                        </label>
+                    </div>
+                </div>
+                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="是否显示兑换比例上涨"><i class="fa fa-question-circle-o"></i></span>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="min-withdraw-amount">最少提现金额（分） <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="min-withdraw-amount" name="min-withdraw-amount" class="form-control col-md-7 col-xs-12"
+                           required="required"  data-validate-minmax="100"
+                           placeholder="" type="number" value="{$config['min-withdraw-amount']['value']|default='100'}">
+                </div>
+                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="每次提现最少提现额度"><i class="fa fa-question-circle-o"></i></span>
+            </div>
+
+            <div class="item form-group">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="max-withdraw-amount">总最大提现金额（分） <span class="required">*</span>
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                    <input id="max-withdraw-amount" name="max-withdraw-amount" class="form-control col-md-7 col-xs-12"
+                           required="required"  data-validate-minmax="0"
+                           placeholder="" type="number" value="{$config['max-withdraw-amount']['value']|default='100'}">
+                </div>
+                <span data-toggle="tooltip" data-placement="top" title="" data-original-title="能提现的总额度"><i class="fa fa-question-circle-o"></i></span>
+            </div>
+
+            <div class="ln_solid"></div>
+            <div class="form-group">
+                <div class="col-md-6 col-md-offset-3">
+                    <button type="button" class="btn btn-success btn-submit">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+
+{block name="head"}
+<link href="/static/g/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+{/block}
+
+{block name="bottom"}
+<!-- validator -->
+<script src="/static/g/vendors/validator/validator.js"></script>
+<script src="/static/g/vendors/iCheck/icheck.min.js"></script>
+<script src="/static/js/open/setting.js"></script>
+{/block}

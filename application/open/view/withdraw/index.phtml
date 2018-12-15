@@ -1,0 +1,65 @@
+{extend name="blank" /}
+
+{block name="pageContent"}
+{:token()}
+<div class="x_panel">
+    <div class="x_content">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>类型</th>
+                    <th>本地单号</th>
+                    <th>微信单号</th>
+                    <th style="min-width: 5rem;">用户</th>
+                    <th style="min-width: 4rem;">金额</th>
+                    <th>积分</th>
+                    <th>状态</th>
+                    <th>#</th>
+                </tr>
+                </thead>
+                <tbody>
+                {foreach $list as $item}
+                <tr data-id="{$item->id}" class="data-row">
+                    <th scope="row">{$item->id}</th>
+                    <td>{$item->trade_type}</td>
+                    <td>{$item->trade_no}</td>
+                    <td class="field-transferNo">{$item->transfer_no}</td>
+                    <td>{$item->user?($item->user->nickname?$item->user->nickname:'--'):$item->openid}</td>
+                    <td><b class="text-success">{$item->amount/100}</b></td>
+                    <td>{$item->point}</td>
+                    <td class="field-status">
+                        {IF condition="$item.transfer_status == 0"}
+                        <span class="label label-default">待审</span>
+                        {ELSEIF condition="$item.transfer_status == 1"}
+                        <span class="label label-success">成功</span> ({$item->transfer_at|date='Y-m-d H:i',###})
+                        {ELSEIF condition="$item.transfer_status > 1"}
+                        <span class="label label-danger">失败</span> ({$item->transfer_at|date='Y-m-d H:i',###}) {$item->transfer_err}
+                        {/IF}
+                    </td>
+                    <td class="field-handle">
+                        {EQ name="$item->transfer_status" value="0"}
+                        <button  class="btn btn-xs btn-success btn-withdraw"><i class="fa fa-paper-plane"></i> 提现</button>
+                        <button  class="btn btn-xs btn-primary btn-finish"><i class="fa fa-check"></i> 完成</button>
+                        <button  class="btn btn-xs btn-danger btn-reject"><i class="fa fa-close"></i> 拒绝</button>
+                        {/EQ}
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+            <div class="col-xs-12">
+                <div class="pull-right">
+                    {include file="paginate"}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="bottom"}
+<script src="/static/js/open/common.js"></script>
+<script src="/static/js/open/withdraw.js?v=1"></script>
+{/block}
